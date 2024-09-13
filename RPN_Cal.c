@@ -55,45 +55,46 @@ double peek(Stack *s)
     return s->items[s->top];
 }
 
-void performOperation(Stack *s, char op)
-{
+void performOperation(Stack *s, char op) {
     double a, b, result;
 
-    switch (op)
-    {
-    case '+':
-        b = pop(s);
-        a = pop(s);
-        result = a + b;
-        push(s, result);
-        break;
-    case '-':
-        b = pop(s);
-        a = pop(s);
-        result = a - b;
-        push(s, result);
-        break;
-    case '*':
-        b = pop(s);
-        a = pop(s);
-        result = a * b;
-        push(s, result);
-        break;
-    case '/':
-        b = pop(s);
-        a = pop(s);
-        if (b == 0)
-        {
-            fprintf(stderr, "Division by zero\n");
-            exit(EXIT_FAILURE);
-        }
-        result = a / b;
-        push(s, result);
-        break;
-    default:
-        fprintf(stderr, "Unknown operator %c\n", op);
+    if (isEmpty(s)) {
+        fprintf(stderr, "Error: Not enough operands for operation '%c'\n", op);
         exit(EXIT_FAILURE);
     }
+
+    b = pop(s);  // Pop the second operand
+
+    if (isEmpty(s)) {
+        fprintf(stderr, "Error: Not enough operands for operation '%c'\n", op);
+        exit(EXIT_FAILURE);
+    }
+
+    a = pop(s);  // Pop the first operand
+
+    switch (op) {
+        case '+':
+            result = a + b;
+            break;
+        case '-':
+            result = a - b;
+            break;
+        case '*':
+            result = a * b;
+            break;
+        case '/':
+            if (b == 0) {
+                fprintf(stderr, "Error: Division by zero\n");
+                exit(EXIT_FAILURE);
+            }
+            result = a / b;
+            break;
+        default:
+            fprintf(stderr, "Error: Unknown operator '%c'\n", op);
+            exit(EXIT_FAILURE);
+    }
+
+    push(s, result);  // Push the result back onto the stack
 }
 
 void processInstruction(Stack *s, const char *instruction)
