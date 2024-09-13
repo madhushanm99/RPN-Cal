@@ -151,4 +151,16 @@ void processInstruction(Stack *s, const char *instruction)
 
 int main()
 {
+    Stack s;
+    initStack(&s);
+
+    char instruction[256];
+
+    printf("Enter RPN instructions:\n");
+    while (fgets(instruction, sizeof(instruction), stdin))
+    {
+        processInstruction(&s, instruction);
+    }
+
+    return 0;
 }
