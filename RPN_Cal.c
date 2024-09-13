@@ -96,6 +96,59 @@ void performOperation(Stack *s, char op)
     }
 }
 
+void processInstruction(Stack *s, const char *instruction)
+{
+    while (*instruction)
+    {
+        if (isspace(*instruction))
+        {
+            ++instruction;
+            continue;
+        }
+
+        if (*instruction == '?')
+        {
+            ++instruction;
+            while (isspace(*instruction))
+                ++instruction;
+            double value = atof(instruction);
+            push(s, value);
+            while (isdigit(*instruction) || *instruction == '.' || *instruction == '-')
+                ++instruction;
+        }
+        else if (*instruction == '+')
+        {
+            performOperation(s, '+');
+            ++instruction;
+        }
+        else if (*instruction == '-')
+        {
+            performOperation(s, '-');
+            ++instruction;
+        }
+        else if (*instruction == '*')
+        {
+            performOperation(s, '*');
+            ++instruction;
+        }
+        else if (*instruction == '/')
+        {
+            performOperation(s, '/');
+            ++instruction;
+        }
+        else if (*instruction == '=')
+        {
+            printf("Result: %.2f\n", peek(s));
+            ++instruction;
+        }
+        else
+        {
+            fprintf(stderr, "Unknown instruction %c\n", *instruction);
+            exit(EXIT_FAILURE);
+        }
+    }
+}
+
 int main()
 {
 }
