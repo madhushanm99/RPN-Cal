@@ -55,6 +55,47 @@ double peek(Stack *s)
     return s->items[s->top];
 }
 
+void performOperation(Stack *s, char op)
+{
+    double a, b, result;
 
-int main() {
+    switch (op)
+    {
+    case '+':
+        b = pop(s);
+        a = pop(s);
+        result = a + b;
+        push(s, result);
+        break;
+    case '-':
+        b = pop(s);
+        a = pop(s);
+        result = a - b;
+        push(s, result);
+        break;
+    case '*':
+        b = pop(s);
+        a = pop(s);
+        result = a * b;
+        push(s, result);
+        break;
+    case '/':
+        b = pop(s);
+        a = pop(s);
+        if (b == 0)
+        {
+            fprintf(stderr, "Division by zero\n");
+            exit(EXIT_FAILURE);
+        }
+        result = a / b;
+        push(s, result);
+        break;
+    default:
+        fprintf(stderr, "Unknown operator %c\n", op);
+        exit(EXIT_FAILURE);
+    }
+}
+
+int main()
+{
 }
