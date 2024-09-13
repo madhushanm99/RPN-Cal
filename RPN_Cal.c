@@ -54,3 +54,40 @@ double peek(Stack *s)
     }
     return s->items[s->top];
 }
+
+int main()
+{
+    Stack s;
+    initStack(&s);
+
+    push(&s, 10.0);
+    push(&s, 20.0);
+    push(&s, 30.0);
+
+    printf("Top of stack: %.2f\n", peek(&s));
+
+    printf("Popped value: %.2f\n", pop(&s));
+    printf("Popped value: %.2f\n", pop(&s));
+
+    if (isEmpty(&s))
+    {
+        printf("Stack is empty\n");
+    }
+    else
+    {
+        printf("Stack is not empty\n");
+    }
+
+    printf("Popped value: %.2f\n", pop(&s));
+
+    if (isEmpty(&s))
+    {
+        printf("Stack is empty\n");
+    }
+    else
+    {
+        printf("Stack is not empty\n");
+    }
+
+    return 0;
+}
