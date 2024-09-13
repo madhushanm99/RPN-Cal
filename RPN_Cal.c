@@ -54,3 +54,7 @@ double peek(Stack *s)
     }
     return s->items[s->top];
 }
+
+
+int main() {
+}
