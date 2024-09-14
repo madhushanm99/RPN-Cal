@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <string.h>
 
 #define MAX_STACK_SIZE 100
+#define MAX_INPUT_SIZE 256
 
 typedef struct
 {
@@ -54,7 +56,7 @@ double peek(Stack *s)
     }
     return s->items[s->top];
 }
-
+// Perform arithmetic operations
 void performOperation(Stack *s, char op) {
     double a, b, result;
 
@@ -97,54 +99,38 @@ void performOperation(Stack *s, char op) {
     push(s, result);  // Push the result back onto the stack
 }
 
+// Process each instruction
 void processInstruction(Stack *s, const char *instruction)
 {
-    while (*instruction)
-    {
-        if (isspace(*instruction))
-        {
-            ++instruction;
-            continue;
+    char *endPtr;
+    double value;
+
+    while (*instruction) {
+        while (isspace(*instruction)) {
+            ++instruction;  // Skip whitespace
         }
 
-        if (*instruction == '?')
-        {
+        if (*instruction == '\0') {
+            break;  // End of string
+        }
+
+        if (*instruction == '?') {  // Operand input
             ++instruction;
-            while (isspace(*instruction))
-                ++instruction;
-            double value = atof(instruction);
+            value = strtod(instruction, &endPtr);
+            if (instruction == endPtr) {
+                fprintf(stderr, "Error: Invalid operand\n");
+                exit(EXIT_FAILURE);
+            }
             push(s, value);
-            while (isdigit(*instruction) || *instruction == '.' || *instruction == '-')
-                ++instruction;
-        }
-        else if (*instruction == '+')
-        {
-            performOperation(s, '+');
+            instruction = endPtr;  // Move to the next part of the instruction
+        } else if (strchr("+-*/", *instruction)) {  // Operators
+            performOperation(s, *instruction);
             ++instruction;
-        }
-        else if (*instruction == '-')
-        {
-            performOperation(s, '-');
-            ++instruction;
-        }
-        else if (*instruction == '*')
-        {
-            performOperation(s, '*');
-            ++instruction;
-        }
-        else if (*instruction == '/')
-        {
-            performOperation(s, '/');
-            ++instruction;
-        }
-        else if (*instruction == '=')
-        {
+        } else if (*instruction == '=') {  // Print result
             printf("Result: %.2f\n", peek(s));
             ++instruction;
-        }
-        else
-        {
-            fprintf(stderr, "Unknown instruction %c\n", *instruction);
+        } else {
+            fprintf(stderr, "Error: Invalid instruction '%c'\n", *instruction);
             exit(EXIT_FAILURE);
         }
     }
@@ -155,11 +141,13 @@ int main()
     Stack s;
     initStack(&s);
 
-    char instruction[256];
+    char instruction[MAX_INPUT_SIZE];
 
     printf("Enter RPN instructions:\n");
-    while (fgets(instruction, sizeof(instruction), stdin))
-    {
+    while (fgets(instruction, sizeof(instruction), stdin)) {
+        if (strlen(instruction) == 1 && instruction[0] == '\n') {
+            continue;  // Skip empty lines
+        }
         processInstruction(&s, instruction);
     }
 
